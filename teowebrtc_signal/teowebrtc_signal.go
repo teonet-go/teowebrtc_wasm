@@ -79,7 +79,7 @@ func (sig *Signal) serveWS(addr string) {
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{CheckOrigin: func(*http.Request) bool { return true }} // use default options
 
 func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
