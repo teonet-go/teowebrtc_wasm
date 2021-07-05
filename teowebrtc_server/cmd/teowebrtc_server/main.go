@@ -13,12 +13,13 @@ import (
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
+var name = flag.String("name", "server-1", "this server name")
 
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
-	err := teowebrtc_server.Connect(*addr, "server-1", func(peer string) {
+	err := teowebrtc_server.Connect(*addr, *name, func(peer string) {
 		log.Println("Connected to", peer)
 	})
 	if err != nil {

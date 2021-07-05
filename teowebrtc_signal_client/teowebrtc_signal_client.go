@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -64,12 +63,19 @@ func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error)
 	return
 }
 
+// Close connection to signal server
+func (cli *SignalClient) Close() {
+	log.Println("Sinal client closed")
+	cli.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	// cli.conn.Close()
+}
+
 // SetReadDeadline sets the read deadline on the underlying network connection.
 // After a read has timed out, the websocket connection state is corrupt and all
 // future reads will return an error. A zero value for t means reads will not time out.
-func (cli SignalClient) SetReadDeadline(t time.Time) error {
-	return cli.conn.SetReadDeadline(t)
-}
+// func (cli SignalClient) SetReadDeadline(t time.Time) error {
+// 	return cli.conn.SetReadDeadline(t)
+// }
 
 // WaitOffer wait offer signal received
 func (cli SignalClient) WaitOffer() (sig Signal, err error) {

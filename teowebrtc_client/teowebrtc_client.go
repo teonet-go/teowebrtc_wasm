@@ -55,6 +55,7 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	pc.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 		log.Printf("ICE Connection State has changed: %s\n", connectionState.String())
 		if connectionState.String() == "connected" {
+			signal.Close()
 			connected(server, &DataChannel{dc})
 		}
 	})
@@ -153,6 +154,12 @@ type DataChannel struct {
 
 func (d *DataChannel) OnOpen(f func()) {
 	d.dc.OnOpen(f)
+}
+
+func (d *DataChannel) OnMessage(f func(data []byte)) {
+	d.dc.OnMessage(func(msg webrtc.DataChannelMessage) {
+		f(msg.Data)
+	})
 }
 
 func (d *DataChannel) Send(data []byte) error {

@@ -98,9 +98,18 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 		pc.OnDataChannel(func(d *webrtc.DataChannel) {
 			log.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
 
+			d.OnOpen(func() {
+				log.Printf("Data channel opened")
+			})
+
 			// Register text message handling
 			d.OnMessage(func(msg webrtc.DataChannelMessage) {
 				log.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
+				log.Println(d, msg)
+				// Send echo answer
+				data := []byte("Answer to: ")
+				data = append(data, msg.Data...)
+				d.Send(data)
 			})
 
 		})
@@ -126,10 +135,8 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 
 		// Get client ICECandidate
 		for {
-			// signal.SetReadDeadline(time.Now().Add(5 * time.Second))
 			sig, err = signal.WaitCandidate()
 			if err != nil {
-				// signal.SetReadDeadline(time.Time{})
 				break
 			}
 
@@ -151,6 +158,8 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 			}
 		}
 	}
+
+	select {}
 
 	return
 }

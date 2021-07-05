@@ -103,7 +103,7 @@ func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 	// writeErrMessage write json message with error
 	writeErrMessage := func(messageType int, err error) {
 		msg := []byte(fmt.Sprintf("{\"err\":\"%s\"}", err))
-		log.Print(err)
+		log.Print("Error: ", err)
 		c.WriteMessage(messageType, msg)
 	}
 
@@ -117,12 +117,15 @@ func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 		return false
 	}
 
+	// Befor close
+	defer func() { log.Printf("Connection to %s closed", address) }()
+
 	// Process messages
 	for {
 		mt, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read message error:", err)
-			break
+			log.Println("Read message error:", err)
+			return
 		}
 
 		// Parse json
@@ -179,7 +182,7 @@ func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 			if !ok {
 				err := errors.New("peer does not connected")
 				writeErrMessage(mt, err)
-				return
+				continue
 			}
 			s.Peer = address
 			message, err = json.Marshal(s)
@@ -194,7 +197,7 @@ func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 		err = c.WriteMessage(mt, message)
 		if err != nil {
 			log.Println("write message error:", err)
-			break
+			return
 		}
 	}
 }

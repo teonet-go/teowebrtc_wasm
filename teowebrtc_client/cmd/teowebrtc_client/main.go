@@ -29,9 +29,14 @@ func main() {
 		d.OnOpen(func() {
 			for {
 				id++
-				d.Send([]byte(fmt.Sprintf("Hello from %s with id %d!", *name, id)))
+				msg := fmt.Sprintf("Hello from %s with id %d!", *name, id)
+				d.Send([]byte(msg))
+				log.Printf("Send: %s", msg)
 				time.Sleep(5 * time.Second)
 			}
+		})
+		d.OnMessage(func(data []byte) {
+			log.Printf("Got: %s", data)
 		})
 	})
 	if err != nil {
