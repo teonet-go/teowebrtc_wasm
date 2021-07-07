@@ -55,7 +55,7 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	pc.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 		log.Printf("ICE Connection State has changed: %s\n", connectionState.String())
 		if connectionState.String() == "connected" {
-			signal.Close()
+			// signal.Close()
 			connected(server, &DataChannel{dc})
 		}
 	})

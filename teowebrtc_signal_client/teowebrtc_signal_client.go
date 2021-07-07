@@ -6,11 +6,13 @@
 package teowebrtc_signal_client
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/url"
+	"time"
 
-	"github.com/gorilla/websocket"
+	"nhooyr.io/websocket"
 )
 
 // New signal server client
@@ -19,7 +21,9 @@ func New() *SignalClient {
 }
 
 type SignalClient struct {
-	conn *websocket.Conn
+	conn   *websocket.Conn
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 type Login struct {
@@ -36,14 +40,16 @@ type Signal struct {
 // Connect to signal server and send login signal
 func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error) {
 	u := url.URL{Scheme: "ws", Host: signalServerAddr, Path: "/signal"}
-	log.Printf("Connecting to %s", u.String())
-
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	log.Printf("Connecting to %s\n", u.String())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	c, _, err := websocket.Dial(ctx, u.String(), nil)
 	if err != nil {
 		log.Println("Dial error:", err)
 		return
 	}
 	cli.conn = c
+	cli.ctx = ctx
+	cli.cancel = cancel
 
 	// Send login signal
 	var login = Login{"login", peerLogin}
@@ -52,7 +58,7 @@ func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error)
 		log.Println("Login marshal:", err)
 		return
 	}
-	err = c.WriteMessage(websocket.TextMessage, d)
+	err = c.Write(ctx, websocket.MessageText, d)
 	if err != nil {
 		log.Println("Write message error:", err)
 		return
@@ -66,16 +72,9 @@ func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error)
 // Close connection to signal server
 func (cli *SignalClient) Close() {
 	log.Println("Sinal client closed")
-	cli.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-	// cli.conn.Close()
+	cli.conn.Close(websocket.StatusNormalClosure, "done")
+	cli.cancel()
 }
-
-// SetReadDeadline sets the read deadline on the underlying network connection.
-// After a read has timed out, the websocket connection state is corrupt and all
-// future reads will return an error. A zero value for t means reads will not time out.
-// func (cli SignalClient) SetReadDeadline(t time.Time) error {
-// 	return cli.conn.SetReadDeadline(t)
-// }
 
 // WaitOffer wait offer signal received
 func (cli SignalClient) WaitOffer() (sig Signal, err error) {
@@ -99,7 +98,7 @@ func (cli SignalClient) WaitCandidate() (sig Signal, err error) {
 
 // waitAnswer waite message received
 func (cli SignalClient) waitAnswer() (message []byte, err error) {
-	_, message, err = cli.conn.ReadMessage()
+	_, message, err = cli.conn.Read(cli.ctx)
 	if err != nil {
 		log.Println("Read message error:", err)
 		return
@@ -143,7 +142,7 @@ func (cli SignalClient) writeSignal(signal, peer string, date []byte) (err error
 	var i interface{}
 	json.Unmarshal(date, &i)
 	data, _ := json.Marshal(Signal{signal, peer, i})
-	err = cli.conn.WriteMessage(websocket.TextMessage, data)
+	err = cli.conn.Write(cli.ctx, websocket.MessageText, data)
 	if err != nil {
 		log.Println("Write message error:", err)
 		return
