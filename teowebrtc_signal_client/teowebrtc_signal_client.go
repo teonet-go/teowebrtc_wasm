@@ -109,7 +109,7 @@ func (cli SignalClient) waitAnswer() (message []byte, err error) {
 
 // WriteOffer send offer signal
 func (cli SignalClient) WriteOffer(peer string, offer []byte) (answer []byte, err error) {
-	log.Printf("Write offer to %s", peer)
+	log.Printf("Send offer to %s", peer)
 	err = cli.writeSignal("offer", peer, offer)
 	if err != nil {
 		return
@@ -120,7 +120,7 @@ func (cli SignalClient) WriteOffer(peer string, offer []byte) (answer []byte, er
 
 // WriteAnswer send answer signal
 func (cli SignalClient) WriteAnswer(peer string, answer []byte) (err error) {
-	log.Printf("Write answer to %s", peer)
+	log.Printf("Send answer to %s", peer)
 	err = cli.writeSignal("answer", peer, answer)
 	if err != nil {
 		return
@@ -130,7 +130,7 @@ func (cli SignalClient) WriteAnswer(peer string, answer []byte) (err error) {
 
 // WriteCandidate send candidate signal
 func (cli SignalClient) WriteCandidate(peer string, candidate []byte) (err error) {
-	log.Printf("Write ICECandidate to %s", peer)
+	log.Printf("Send ICECandidate to %s", peer)
 	cli.writeSignal("candidate", peer, candidate)
 	if err != nil {
 		return

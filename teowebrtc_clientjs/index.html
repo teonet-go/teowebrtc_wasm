@@ -2,12 +2,18 @@
 <html>
 <head>
 <meta charset="utf-8">
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script type="text/javascript" src="teoweb.js"></script>
 <script>  
 window.addEventListener("load", function(evt) {
 
     var output = document.getElementById("output");
     var input = document.getElementById("input");
     var ws;
+
+    // Create Teocli object
+    var teoweb = Teoweb();
+
 
     var print = function(message) {
         var d = document.createElement("div");

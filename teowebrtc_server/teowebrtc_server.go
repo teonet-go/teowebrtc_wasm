@@ -7,7 +7,6 @@ package teowebrtc_server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client"
@@ -85,7 +84,7 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 		pc.OnICECandidate(func(i *webrtc.ICECandidate) {
 			if i != nil {
 				// check(offerPC.AddICECandidate(i.ToJSON()))
-				log.Println("ICECandidate:", i)
+				// log.Println("ICECandidate:", i)
 				candidateData, err := json.Marshal(i)
 				if err != nil {
 					log.Panicln("can't marshal ICECandidate, error:", err)
@@ -105,7 +104,6 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 			// Register text message handling
 			d.OnMessage(func(msg webrtc.DataChannelMessage) {
 				log.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
-				log.Println(d, msg)
 				// Send echo answer
 				data := []byte("Answer to: ")
 				data = append(data, msg.Data...)
@@ -115,13 +113,17 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 		})
 
 		// Set the remote SessionDescription
-		pc.SetRemoteDescription(offer)
+		err = pc.SetRemoteDescription(offer)
+		if err != nil {
+			log.Print("SetRemoteDescription error: ", err)
+			continue
+		}
 
 		// Initiates answer and set local SessionDescription
 		answer, _ := pc.CreateAnswer(nil)
 		err = pc.SetLocalDescription(answer)
 		if err != nil {
-			fmt.Print("SetLocalDescription: ")
+			log.Print("SetLocalDescription error: ", err)
 			continue
 		}
 
@@ -149,7 +151,7 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 				skipRead = true
 				break
 			}
-			log.Printf("Got ICECandidatecandidate from %s", sig.Peer)
+			log.Printf("Got ICECandidate from %s\n", sig.Peer)
 
 			// Add servers ICECandidate
 			err = pc.AddICECandidate(i.ToJSON())
