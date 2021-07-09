@@ -43,7 +43,6 @@ func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error)
 	ctx, cancel := context.WithCancel(context.Background())
 	c, _, err := websocket.Dial(ctx, u.String(), nil)
 	if err != nil {
-		log.Println("Dial error:", err)
 		cancel()
 		return
 	}

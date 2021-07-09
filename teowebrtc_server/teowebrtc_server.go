@@ -8,6 +8,7 @@ package teowebrtc_server
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client"
 	"github.com/pion/webrtc/v3"
@@ -22,10 +23,11 @@ connect:
 	// Connect to signal server
 	err = signal.Connect(signalServerAddr, login)
 	if err != nil {
-		log.Println("can't connect to signal server, error:", err)
-		return
+		log.Println("Can't connect to signal server, error:", err)
+		time.Sleep(5 * time.Second)
+		goto connect
 	}
-	log.Println()
+	log.Println("Connected")
 
 	var skipRead = false
 
