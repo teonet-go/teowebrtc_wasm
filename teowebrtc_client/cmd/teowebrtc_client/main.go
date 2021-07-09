@@ -22,26 +22,42 @@ func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
+	var id = 0
+connect:
+	// Connect to teo webrtc application (server)
 	err := teowebrtc_client.Connect(*addr, *name, *server, func(peer string, d *teowebrtc_client.DataChannel) {
 		log.Println("Connected to", peer)
-		// Send messages to created data channel
-		var id = 0
+		var connected = true
+
+		// On open Send messages to created data channel
 		d.OnOpen(func() {
-			for {
+			for connected {
 				id++
 				msg := fmt.Sprintf("Hello from %s with id %d!", *name, id)
-				d.Send([]byte(msg))
+				err := d.Send([]byte(msg))
+				if err != nil {
+					log.Printf("Send error: %s\n", err)
+					continue
+				}
 				log.Printf("Send: %s", msg)
 				time.Sleep(5 * time.Second)
 			}
 		})
+
+		d.OnClose(func() {
+			log.Println("Connection closed")
+			connected = false
+		})
+
 		d.OnMessage(func(data []byte) {
 			log.Printf("Got: %s", data)
 		})
 	})
 	if err != nil {
-		log.Fatalln("connect error:", err)
+		log.Println("connect error:", err)
 	}
 
-	select {}
+	// Reconnect after five seconds
+	time.Sleep(5 * time.Second)
+	goto connect
 }

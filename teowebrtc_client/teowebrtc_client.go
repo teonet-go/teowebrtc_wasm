@@ -15,6 +15,8 @@ import (
 
 func Connect(signalServerAddr, login, server string, connected func(peer string, dc *DataChannel)) (err error) {
 
+	var wait = make(chan interface{})
+
 	// Create signal server client
 	signal := teowebrtc_signal_client.New()
 
@@ -54,8 +56,12 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	// Add handlers for setting up the connection.
 	pc.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 		log.Printf("ICE Connection State has changed: %s\n", connectionState.String())
-		if connectionState.String() == "connected" {
+		switch connectionState.String() {
+		case "connected":
 			connected(server, &DataChannel{dc})
+		case "disconnected":
+			dc.Close()
+			wait <- struct{}{}
 		}
 	})
 
@@ -149,9 +155,10 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	// Close signal server connection
 	signal.Close()
 
-	select {}
+	<-wait
+	close(wait)
 
-	// return
+	return
 }
 
 type DataChannel struct {
@@ -160,6 +167,10 @@ type DataChannel struct {
 
 func (d *DataChannel) OnOpen(f func()) {
 	d.dc.OnOpen(f)
+}
+
+func (d *DataChannel) OnClose(f func()) {
+	d.dc.OnClose(f)
 }
 
 func (d *DataChannel) OnMessage(f func(data []byte)) {
