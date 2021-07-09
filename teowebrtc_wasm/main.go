@@ -26,14 +26,25 @@ func main() {
 	name := "web-1"
 	server := "server-1"
 
-	// function definition
-	setonconnect := func(this js.Value, i []js.Value) interface{} {
-		log.Println("setonconnect")
-		return js.ValueOf(i[0].Int() + i[1].Int())
-	}
+	// Test Writing to the DOM
+	document := js.Global().Get("document")
+	p := document.Call("createElement", "p")
+	p.Set("innerHTML", "Hello WASM from Go!")
+	document.Get("body").Call("appendChild", p)
 
-	// exposing to JS
-	js.Global().Set("!!!! setonconnect !!!!!", js.FuncOf(setonconnect))
+	// Test Calling Go from JavaScript
+	printMessage := func(this js.Value, inputs []js.Value) interface{} {
+		message := inputs[0].String()
+
+		document := js.Global().Get("document")
+		p := document.Call("createElement", "p")
+		p.Set("innerHTML", message)
+		document.Get("body").Call("appendChild", p)
+
+		return js.Undefined()
+		// return nil
+	}
+	js.Global().Set("printMessage", js.FuncOf(printMessage))
 
 	// Connect to teo webrtc application (server)
 	err := teowebrtc_client.Connect(addr, name, server, func(peer string, d *teowebrtc_client.DataChannel) {
