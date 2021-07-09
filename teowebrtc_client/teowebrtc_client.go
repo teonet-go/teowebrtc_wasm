@@ -55,12 +55,11 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	pc.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 		log.Printf("ICE Connection State has changed: %s\n", connectionState.String())
 		if connectionState.String() == "connected" {
-			// signal.Close()
 			connected(server, &DataChannel{dc})
 		}
 	})
 
-	// Initiates the offer.
+	// Initiates the offer
 	offer, _ := pc.CreateOffer(nil)
 
 	// Send offer and get answer
@@ -82,9 +81,8 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 		return
 	}
 	peer := sig.Peer
-	sigData, _ := json.Marshal(sig.Data)
 	var answer webrtc.SessionDescription
-	err = json.Unmarshal(sigData, &answer)
+	err = json.Unmarshal(sig.Data, &answer)
 	if err != nil {
 		log.Println(errMsg, err)
 		return
@@ -94,7 +92,6 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	// Send AddICECandidate to remote peer
 	pc.OnICECandidate(func(i *webrtc.ICECandidate) {
 		if i != nil {
-			// check(offerPC.AddICECandidate(i.ToJSON()))
 			log.Println("ICECandidate:", i)
 			candidateData, err := json.Marshal(i)
 			if err != nil {
@@ -102,6 +99,9 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 				return
 			}
 			signal.WriteCandidate(peer, candidateData)
+		} else {
+			log.Println("Collection of candidates is finished ")
+			signal.WriteCandidate(peer, nil)
 		}
 	})
 
@@ -121,15 +121,18 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 
 	// Get servers ICECandidate
 	for {
-		sig, err := signal.WaitCandidate()
+		sig, err := signal.WaitSignal()
 		if err != nil {
 			break
 		}
 
 		// Unmarshal ICECandidate signal
 		var i webrtc.ICECandidate
-		sigData, _ := json.Marshal(sig.Data)
-		err = json.Unmarshal(sigData, &i)
+		if len(sig.Data) == 0 {
+			log.Println("All ICECandidate processed")
+			break
+		}
+		err = json.Unmarshal(sig.Data, &i)
 		if err != nil {
 			log.Println("can't unmarshal candidate, error:", err)
 			continue
@@ -143,9 +146,12 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 		}
 	}
 
+	// Close signal server connection
+	signal.Close()
+
 	select {}
 
-	return
+	// return
 }
 
 type DataChannel struct {

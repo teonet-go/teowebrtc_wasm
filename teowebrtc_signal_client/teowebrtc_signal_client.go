@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
-	"time"
 
 	"nhooyr.io/websocket"
 )
@@ -32,19 +31,20 @@ type Login struct {
 }
 
 type Signal struct {
-	Signal string      `json:"signal"`
-	Peer   string      `json:"peer"`
-	Data   interface{} `json:"data"`
+	Signal string `json:"signal"`
+	Peer   string `json:"peer"`
+	Data   []byte `json:"data"`
 }
 
 // Connect to signal server and send login signal
 func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error) {
 	u := url.URL{Scheme: "ws", Host: signalServerAddr, Path: "/signal"}
 	log.Printf("Connecting to %s\n", u.String())
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithCancel(context.Background())
 	c, _, err := websocket.Dial(ctx, u.String(), nil)
 	if err != nil {
 		log.Println("Dial error:", err)
+		cancel()
 		return
 	}
 	cli.conn = c
@@ -56,11 +56,13 @@ func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error)
 	d, err := json.Marshal(login)
 	if err != nil {
 		log.Println("Login marshal:", err)
+		cli.Close()
 		return
 	}
 	err = c.Write(ctx, websocket.MessageText, d)
 	if err != nil {
 		log.Println("Write message error:", err)
+		cli.Close()
 		return
 	}
 
@@ -76,18 +78,8 @@ func (cli *SignalClient) Close() {
 	cli.cancel()
 }
 
-// WaitOffer wait offer signal received
-func (cli SignalClient) WaitOffer() (sig Signal, err error) {
-	message, err := cli.waitAnswer()
-	if err != nil {
-		return
-	}
-	json.Unmarshal(message, &sig)
-	return
-}
-
-// WaitCandidate wait candidate signal received
-func (cli SignalClient) WaitCandidate() (sig Signal, err error) {
+// WaitSignal wait offer signal received
+func (cli SignalClient) WaitSignal() (sig Signal, err error) {
 	message, err := cli.waitAnswer()
 	if err != nil {
 		return
@@ -138,11 +130,9 @@ func (cli SignalClient) WriteCandidate(peer string, candidate []byte) (err error
 }
 
 // writeSignal send signal
-func (cli SignalClient) writeSignal(signal, peer string, date []byte) (err error) {
-	var i interface{}
-	json.Unmarshal(date, &i)
-	data, _ := json.Marshal(Signal{signal, peer, i})
-	err = cli.conn.Write(cli.ctx, websocket.MessageText, data)
+func (cli SignalClient) writeSignal(signal, peer string, data []byte) (err error) {
+	d, _ := json.Marshal(Signal{signal, peer, data})
+	err = cli.conn.Write(cli.ctx, websocket.MessageText, d)
 	if err != nil {
 		log.Println("Write message error:", err)
 		return

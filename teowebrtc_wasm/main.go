@@ -6,7 +6,7 @@ GOOS=js GOARCH=wasm go build -o main.wasm
 cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # install goexec: go get -u github.com/shurcooL/goexec
-goexec 'http.ListenAndServe(`:8080`, http.FileServer(http.Dir(`.`)))'
+goexec 'http.ListenAndServe(`:8088`, http.FileServer(http.Dir(`.`)))'
 
 */
 package main
@@ -14,6 +14,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"syscall/js"
 	"time"
 
 	"github.com/kirill-scherba/teowebrtc/teowebrtc_client"
@@ -25,6 +26,16 @@ func main() {
 	name := "web-1"
 	server := "server-1"
 
+	// function definition
+	setonconnect := func(this js.Value, i []js.Value) interface{} {
+		log.Println("setonconnect")
+		return js.ValueOf(i[0].Int() + i[1].Int())
+	}
+
+	// exposing to JS
+	js.Global().Set("!!!! setonconnect !!!!!", js.FuncOf(setonconnect))
+
+	// Connect to teo webrtc application (server)
 	err := teowebrtc_client.Connect(addr, name, server, func(peer string, d *teowebrtc_client.DataChannel) {
 		log.Println("Connected to", peer)
 		// Send messages to created data channel

@@ -18,6 +18,7 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 	// Create signal server client
 	signal := teowebrtc_signal_client.New()
 
+connect:
 	// Connect to signal server
 	err = signal.Connect(signalServerAddr, login)
 	if err != nil {
@@ -33,19 +34,19 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 
 		// Wait offer signal
 		if !skipRead {
-			sig, err = signal.WaitOffer()
+			sig, err = signal.WaitSignal()
 			if err != nil {
 				log.Println("can't wait offer, error:", err)
-				break
+				goto connect
+				// break
 			}
 		}
 		skipRead = false
 
 		// Unmarshal offer
 		peer := sig.Peer
-		sigData, _ := json.Marshal(sig.Data)
 		var offer webrtc.SessionDescription
-		json.Unmarshal(sigData, &offer)
+		json.Unmarshal(sig.Data, &offer)
 		if err != nil {
 			log.Println("can't unmarshal offer, error:", err)
 			continue
@@ -83,14 +84,24 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 		// Send AddICECandidate to remote peer
 		pc.OnICECandidate(func(i *webrtc.ICECandidate) {
 			if i != nil {
-				// check(offerPC.AddICECandidate(i.ToJSON()))
-				// log.Println("ICECandidate:", i)
 				candidateData, err := json.Marshal(i)
 				if err != nil {
-					log.Panicln("can't marshal ICECandidate, error:", err)
+					log.Println("can't marshal ICECandidate, error:", err)
 					return
 				}
 				signal.WriteCandidate(peer, candidateData)
+			}
+		})
+
+		// Check ICEGathering state
+		pc.OnICEGatheringStateChange(func(state webrtc.ICEGathererState) {
+			switch state {
+			case webrtc.ICEGathererStateGathering:
+				log.Println("Collection of candidates has begin")
+
+			case webrtc.ICEGathererStateComplete:
+				log.Println("Collection of candidates is finished ")
+				signal.WriteCandidate(peer, nil)
 			}
 		})
 
@@ -137,15 +148,18 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 
 		// Get client ICECandidate
 		for {
-			sig, err = signal.WaitCandidate()
+			sig, err = signal.WaitSignal()
 			if err != nil {
 				break
 			}
 
 			// Unmarshal ICECandidate signal
 			var i webrtc.ICECandidate
-			sigData, _ := json.Marshal(sig.Data)
-			err = json.Unmarshal(sigData, &i)
+			if len(sig.Data) == 0 {
+				log.Println("All ICECandidate processed")
+				break
+			}
+			err = json.Unmarshal(sig.Data, &i)
 			if err != nil {
 				log.Println("can't unmarshal candidate, error:", err)
 				skipRead = true
@@ -161,7 +175,6 @@ func Connect(signalServerAddr, login string, connected func(peer string)) (err e
 		}
 	}
 
-	select {}
-
-	return
+	// select {}
+	// return
 }

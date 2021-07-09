@@ -36,9 +36,9 @@ type loginSignal struct {
 }
 
 type signalSignal struct {
-	Signal string      `json:"signal"`
-	Peer   string      `json:"peer"`
-	Data   interface{} `json:"data"`
+	Signal string `json:"signal"`
+	Peer   string `json:"peer"`
+	Data   []byte `json:"data"`
 }
 
 func (sig *Signal) addPeer(address string, conn *websocket.Conn) {
