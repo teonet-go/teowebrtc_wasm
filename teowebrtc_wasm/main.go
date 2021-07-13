@@ -47,14 +47,29 @@ func main() {
 	js.Global().Set("printMessage", js.FuncOf(printMessage))
 
 	var id = 0
+	var finish = true
+	var connected bool
+
 connect:
+
+	// If we was connected than set connected flag to false and wait finish
+	// flag will sets to true
+	if connected {
+		connected = false
+		for !finish {
+			time.Sleep(100 * time.Microsecond)
+		}
+	}
+
 	// Connect to teo webrtc application (server)
+	// log.Println("Start connection")
 	err := teowebrtc_client.Connect(addr, name, server, func(peer string, d *teowebrtc_client.DataChannel) {
 		log.Println("Connected to", peer)
-		var connected = true
 
 		// On open Send messages to created data channel
 		d.OnOpen(func() {
+			connected = true
+			finish = false
 			for connected {
 				id++
 				msg := fmt.Sprintf("Hello from %s with id %d!", name, id)
@@ -66,13 +81,19 @@ connect:
 				log.Printf("Send: %s", msg)
 				time.Sleep(5 * time.Second)
 			}
+			log.Println("Finish send messages")
+			finish = true
 		})
 
+		// On data connection closed
+		// This callback does not work in webasm so connect and finish bools
+		// flag used to finish previouse connection before reconnect
 		d.OnClose(func() {
 			log.Println("Connection closed")
 			connected = false
 		})
 
+		// On message received callback
 		d.OnMessage(func(data []byte) {
 			log.Printf("Got: %s", data)
 		})
