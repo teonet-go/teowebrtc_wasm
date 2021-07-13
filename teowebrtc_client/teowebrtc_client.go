@@ -16,6 +16,7 @@ import (
 func Connect(signalServerAddr, login, server string, connected func(peer string, dc *DataChannel)) (err error) {
 
 	var wait = make(chan interface{})
+	defer close(wait)
 
 	// Create signal server client
 	signal := teowebrtc_signal_client.New()
@@ -42,6 +43,7 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	if err != nil {
 		return
 	}
+	defer pc.Close()
 
 	// Create DataChannel
 	dc, err := pc.CreateDataChannel("teo", nil)
@@ -154,9 +156,7 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 
 	// Close signal server connection
 	signal.Close()
-
 	<-wait
-	close(wait)
 
 	return
 }
