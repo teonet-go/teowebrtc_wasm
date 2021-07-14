@@ -8,5 +8,5 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	go.coder.com/go-tools v0.0.0-20190317003359-0c6a35b74a16 // indirect
 	mvdan.cc/sh v2.6.4+incompatible // indirect
-	nhooyr.io/websocket v1.8.7 // indirect
+	nhooyr.io/websocket v1.8.7
 )
