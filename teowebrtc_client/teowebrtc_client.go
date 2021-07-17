@@ -161,6 +161,10 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	return
 }
 
+func NewDataChannel(dc *webrtc.DataChannel) *DataChannel {
+	return &DataChannel{dc}
+}
+
 type DataChannel struct {
 	dc *webrtc.DataChannel
 }
