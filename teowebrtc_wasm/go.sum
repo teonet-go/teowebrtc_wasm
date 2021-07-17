@@ -35,6 +35,8 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/kirill-scherba/teowebrtc/teowebrtc_client v0.0.0-20210714091907-92d49da9fb8a h1:uufzLInegBIUvITX321fJ+/MvidSqngUydYoEGeyISI=
 github.com/kirill-scherba/teowebrtc/teowebrtc_client v0.0.0-20210714091907-92d49da9fb8a/go.mod h1:qIAtRLdLWWDexaOCHP/TORo+RxPSy6oHBYid1sDb9qg=
+github.com/kirill-scherba/teowebrtc/teowebrtc_client v0.0.0-20210717115816-db297262bfd9 h1:f35EyYCA0BJafyZ9oqUhJpXgq2LwYc8ByGv8u1OOL1E=
+github.com/kirill-scherba/teowebrtc/teowebrtc_client v0.0.0-20210717115816-db297262bfd9/go.mod h1:qIAtRLdLWWDexaOCHP/TORo+RxPSy6oHBYid1sDb9qg=
 github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210714085418-0a5e7f8bc7a1 h1:9ARIBCpboXC9/v2M2sqLppSW0xxfruAAJEWEqn7auVI=
 github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210714085418-0a5e7f8bc7a1/go.mod h1:ajwQ3YNwG3D2zI7xrc/rZ6k5CGfAQ6XzyGrNOK4veSc=
 github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210714091907-92d49da9fb8a h1:3KBmTSrRkRU1IBk9gRcbWbe93Mmq45YbcCY5xVjQaiY=
