@@ -10,11 +10,12 @@ import (
 	"log"
 	"time"
 
+	"github.com/kirill-scherba/teowebrtc/teowebrtc_client"
 	"github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client"
 	"github.com/pion/webrtc/v3"
 )
 
-func Connect(signalServerAddr, login string, connected func(peer string)) (err error) {
+func Connect(signalServerAddr, login string, connected func(peer string, dc *teowebrtc_client.DataChannel)) (err error) {
 
 	// Create signal server client
 	signal := teowebrtc_signal_client.New()
@@ -78,9 +79,6 @@ connect:
 		// Add handlers for setting up the connection.
 		pc.OnICEConnectionStateChange(func(connectionState webrtc.ICEConnectionState) {
 			log.Printf("ICE Connection State has changed: %s\n", connectionState.String())
-			if connectionState.String() == "connected" {
-				connected(peer)
-			}
 		})
 
 		// Send AddICECandidate to remote peer
@@ -109,20 +107,7 @@ connect:
 
 		pc.OnDataChannel(func(d *webrtc.DataChannel) {
 			log.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
-
-			d.OnOpen(func() {
-				log.Printf("Data channel opened")
-			})
-
-			// Register text message handling
-			d.OnMessage(func(msg webrtc.DataChannelMessage) {
-				log.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
-				// Send echo answer
-				data := []byte("Answer to: ")
-				data = append(data, msg.Data...)
-				d.Send(data)
-			})
-
+			connected(peer, teowebrtc_client.NewDataChannel(d))
 		})
 
 		// Set the remote SessionDescription
