@@ -79,10 +79,8 @@ func SetFuncs(subscr *teowebrtc_client.SubscrType) {
 		var wait = make(chan waitType)
 		id = subscr.Add(func(data []byte) (processed bool) {
 			log.Println("Check data:", data)
-			// "Got: Answer to: " // 11
-			log.Println("process data + 11", data[11:])
 			a := teowebrtc_client.NewCmdType()
-			err = a.UnmarshalBinary(data[11:])
+			err = a.UnmarshalBinary(data)
 			if err != nil {
 				log.Println("unmarshal binary error:", err)
 				return
@@ -108,7 +106,7 @@ func SetFuncs(subscr *teowebrtc_client.SubscrType) {
 			close(wait)
 			subscr.Del(id)
 			if res.err != nil {
-				callback.Invoke(res.err, js.Null())
+				callback.Invoke(res.err.Error(), js.Null())
 			} else {
 				callback.Invoke(js.Null(), string(res.data))
 			}
