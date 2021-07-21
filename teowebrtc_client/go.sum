@@ -48,6 +48,8 @@ github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGn
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210714085418-0a5e7f8bc7a1 h1:9ARIBCpboXC9/v2M2sqLppSW0xxfruAAJEWEqn7auVI=
 github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210714085418-0a5e7f8bc7a1/go.mod h1:ajwQ3YNwG3D2zI7xrc/rZ6k5CGfAQ6XzyGrNOK4veSc=
+github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210721104603-115f62a59ac6 h1:1BZpRC7s7ANKNMbUvAeZWof4X5UN7jGX1cnNpYx4It0=
+github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client v0.0.0-20210721104603-115f62a59ac6/go.mod h1:k8jQC9IF2C88qO+SpO6h5GECrVk4tBNKRGlQoozO4l8=
 github.com/klauspost/compress v1.10.3 h1:OP96hzwJVBIHYU52pVTI6CczrxPvrGfgqF9N5eTO0Q8=
 github.com/klauspost/compress v1.10.3/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
