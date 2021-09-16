@@ -13,7 +13,7 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-func Connect(signalServerAddr, login, server string, connected func(peer string, dc *DataChannel)) (err error) {
+func Connect(scheme, signalServerAddr, login, server string, connected func(peer string, dc *DataChannel)) (err error) {
 
 	var wait = make(chan interface{})
 	defer close(wait)
@@ -22,7 +22,7 @@ func Connect(signalServerAddr, login, server string, connected func(peer string,
 	signal := teowebrtc_signal_client.New()
 
 	// Connect to signal server
-	err = signal.Connect(signalServerAddr, login)
+	err = signal.Connect(scheme, signalServerAddr, login)
 	if err != nil {
 		log.Println("can't connect to signal server")
 		return

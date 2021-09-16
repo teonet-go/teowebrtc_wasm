@@ -22,7 +22,7 @@ func Connect(signalServerAddr, login string, connected func(peer string, dc *teo
 
 connect:
 	// Connect to signal server
-	err = signal.Connect(signalServerAddr, login)
+	err = signal.Connect("ws", signalServerAddr, login)
 	if err != nil {
 		log.Println("Can't connect to signal server, error:", err)
 		time.Sleep(5 * time.Second)

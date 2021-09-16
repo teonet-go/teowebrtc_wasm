@@ -1,5 +1,8 @@
 module github.com/kirill-scherba/teowebrtc/teowebrtc_server
 
+// replace github.com/kirill-scherba/teowebrtc/teowebrtc_client => /home/kirill/go/src/github.com/kirill-scherba/teowebrtc/teowebrtc_client
+// replace github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client => /home/kirill/go/src/github.com/kirill-scherba/teowebrtc/teowebrtc_signal_client
+
 go 1.16
 
 require (

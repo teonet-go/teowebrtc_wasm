@@ -18,10 +18,10 @@ import (
 )
 
 // New create new teonet webrtc signal server
-func New(addr string) (sig *Signal) {
+func New(addr, addrSSL string, certAndKey ...string) (sig *Signal) {
 	sig = new(Signal)
 	sig.peers = make(map[string]*websocket.Conn)
-	sig.serveWS(addr)
+	sig.serveWS(addr, addrSSL, certAndKey...)
 	return
 }
 
@@ -73,10 +73,27 @@ func (sig *Signal) address(conn *websocket.Conn) string {
 	return ""
 }
 
-func (sig *Signal) serveWS(addr string) {
+// serveWS start websocek and websocket TLS server and listen for connections,
+// the sertAndKey shoud contain certificate file path and private key file path
+// to start HTTPS websocket server
+func (sig *Signal) serveWS(addr, addrTLS string, certAndKey ...string) {
 	http.HandleFunc("/signal", sig.signal)
+	http.HandleFunc("/hello", sig.hello)
 	http.HandleFunc("/", sig.home)
-	log.Fatal(http.ListenAndServe(addr, nil))
+	go func() {
+		log.Println("strat ws server at:", addr)
+		log.Fatal(http.ListenAndServe(addr, nil))
+	}()
+	log.Println("strat wws server at:", addrTLS)
+	var certFile = "server.crt"
+	var keyFile = "server.key"
+	if len(certAndKey) > 0 {
+		certFile = certAndKey[0]
+	}
+	if len(certAndKey) > 1 {
+		keyFile = certAndKey[1]
+	}
+	log.Fatal(http.ListenAndServeTLS(addrTLS, certFile, keyFile, nil))
 }
 
 var upgrader = websocket.Upgrader{CheckOrigin: func(*http.Request) bool { return true }} // use default options
@@ -202,8 +219,13 @@ func (sig *Signal) signal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (sig *Signal) hello(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte("This is teonet webrtc signal server.\n"))
+}
+
 func (sig *Signal) home(w http.ResponseWriter, r *http.Request) {
-	homeTemplate.Execute(w, "ws://"+r.Host+"/signal")
+	homeTemplate.Execute(w, "wss://"+r.Host+"/signal")
 }
 
 var homeTemplate = template.Must(template.New("").Parse(`
@@ -269,6 +291,7 @@ window.addEventListener("load", function(evt) {
 <body>
 <table>
 <tr><td valign="top" width="50%">
+<h1>Signal server test</h1>
 <p>Click "Open" to create a connection to the server, 
 "Send" to send a message to the server and "Close" to close the connection. 
 You can change the message and send multiple times.

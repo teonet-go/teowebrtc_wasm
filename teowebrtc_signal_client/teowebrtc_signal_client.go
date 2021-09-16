@@ -37,8 +37,8 @@ type Signal struct {
 }
 
 // Connect to signal server and send login signal
-func (cli *SignalClient) Connect(signalServerAddr, peerLogin string) (err error) {
-	u := url.URL{Scheme: "ws", Host: signalServerAddr, Path: "/signal"}
+func (cli *SignalClient) Connect(scheme, signalServerAddr, peerLogin string) (err error) {
+	u := url.URL{Scheme: scheme, Host: signalServerAddr, Path: "/signal"}
 	log.Printf("Connecting to %s\n", u.String())
 	ctx, cancel := context.WithCancel(context.Background())
 	c, _, err := websocket.Dial(ctx, u.String(), nil)

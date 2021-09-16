@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/kirill-scherba/teowebrtc/teowebrtc_client"
-	"github.com/kirill-scherba/teowebrtc/teowebrtc_wasm"
 )
 
 func main() {
@@ -64,7 +63,7 @@ connect:
 
 	// Connect to teo webrtc application (server)
 	// log.Println("Start connection")
-	err := teowebrtc_client.Connect(addr, name, server, func(peer string, d *teowebrtc_client.DataChannel) {
+	err := teowebrtc_client.Connect(scheme, addr, name, server, func(peer string, d *teowebrtc_client.DataChannel) {
 		log.Println("Connected to", peer)
 
 		// On open Send messages to created data channel
