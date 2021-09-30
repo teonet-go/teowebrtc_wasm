@@ -85,14 +85,15 @@ func Connect(scheme, signalServerAddr, login, server string, connected func(peer
 	var sig teowebrtc_signal_client.Signal
 	err = json.Unmarshal(message, &sig)
 	if err != nil {
-		log.Println(errMsg, err)
+		log.Println(errMsg, err, "message: '"+string(message)+"'")
 		return
 	}
 	peer := sig.Peer
 	var answer webrtc.SessionDescription
 	err = json.Unmarshal(sig.Data, &answer)
 	if err != nil {
-		log.Println(errMsg, err)
+		log.Println(errMsg, err, err, "message: '"+string(message)+"'",
+			"sig.Data: '"+string(sig.Data)+"'")
 		return
 	}
 	log.Printf("Got answer from %s", sig.Peer)
