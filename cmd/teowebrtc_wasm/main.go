@@ -2,6 +2,7 @@
 //
 /* Build:
 
+cd cmd/teowebrtc_wasm
 GOOS=js GOARCH=wasm go build -o main.wasm
 cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
@@ -22,9 +23,12 @@ import (
 
 func main() {
 
-	addr := "localhost:8080"
-	name := "web-1"
-	server := "server-1"
+	const (
+		scheme = "http"
+		addr   = "localhost:8081"
+		name   = "wasm-1"
+		server = "server-1"
+	)
 
 	// Test Writing to the DOM
 	document := js.Global().Get("document")
