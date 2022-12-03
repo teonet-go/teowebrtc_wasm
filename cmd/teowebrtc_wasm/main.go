@@ -17,7 +17,7 @@ import (
 	"syscall/js"
 	"time"
 
-	"github.com/kirill-scherba/teowebrtc/teowebrtc_client"
+	"github.com/teonet-go/teowebrtc_client"
 )
 
 func main() {
