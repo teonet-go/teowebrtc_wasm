@@ -4,7 +4,7 @@ go 1.19
 
 // replace github.com/kirill-scherba/teowebrtc/teowebrtc_client => ../teowebrtc_client
 
-require github.com/teonet-go/teowebrtc_client v0.0.7
+require github.com/teonet-go/teowebrtc_client v0.0.8
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
@@ -26,7 +26,9 @@ require (
 	github.com/pion/turn/v2 v2.0.8 // indirect
 	github.com/pion/udp v0.1.1 // indirect
 	github.com/pion/webrtc/v3 v3.1.49 // indirect
-	github.com/teonet-go/teowebrtc_signal_client v0.0.7 // indirect
+	github.com/shurcooL/go v0.0.0-20200502201357-93f07166e636 // indirect
+	github.com/shurcooL/go-goon v1.0.0 // indirect
+	github.com/teonet-go/teowebrtc_signal_client v0.0.8 // indirect
 	golang.org/x/crypto v0.0.0-20221010152910-d6f0a8c073c2 // indirect
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect

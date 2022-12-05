@@ -111,6 +111,10 @@ github.com/pion/webrtc/v3 v3.1.49/go.mod h1:kHf/o47QW4No1rgpsFux/h7lUhtUnwFnSFDZ
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sclevine/agouti v3.0.0+incompatible/go.mod h1:b4WX9W9L1sfQKXeJf1mUTLZKJ48R1S7H23Ji7oFO5Bw=
+github.com/shurcooL/go v0.0.0-20200502201357-93f07166e636 h1:aSISeOcal5irEhJd1M+IrApc0PdcN7e7Aj4yuEnOrfQ=
+github.com/shurcooL/go v0.0.0-20200502201357-93f07166e636/go.mod h1:TDJrrUr11Vxrven61rcy3hJMUqaf/CLWYhHNPmT14Lk=
+github.com/shurcooL/go-goon v1.0.0 h1:BCQPvxGkHHJ4WpBO4m/9FXbITVIsvAm/T66cCcCGI7E=
+github.com/shurcooL/go-goon v1.0.0/go.mod h1:2wTHMsGo7qnpmqA8ADYZtP4I1DD94JpXGQ3Dxq2YQ5w=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
@@ -119,10 +123,10 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMTY=
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/teonet-go/teowebrtc_client v0.0.7 h1:mf5t1fQF6jxts8rej4GTuh2gB8O3dqm0CK2zJEnwxoM=
-github.com/teonet-go/teowebrtc_client v0.0.7/go.mod h1:lfnivcNl/lorDCoMcXgHpBiqagSwLm+Xvy8W5S60KOE=
-github.com/teonet-go/teowebrtc_signal_client v0.0.7 h1:diUVPuLnduncYiv7ZfX108TGMHlAXEDMTtPuTz47XpU=
-github.com/teonet-go/teowebrtc_signal_client v0.0.7/go.mod h1:+RgRCiMUdMevH+Ua4zWw9Wda231mBQiIo+vhhlpvx9Y=
+github.com/teonet-go/teowebrtc_client v0.0.8 h1:bIQ3yjozFZ7YcR/RJl3B762E3paAGeXSkrHuY5Tnr+I=
+github.com/teonet-go/teowebrtc_client v0.0.8/go.mod h1:p+1FlNozWgSKtHm12pE1XLBgrqN+YDlDndu29Ka8AsA=
+github.com/teonet-go/teowebrtc_signal_client v0.0.8 h1:RyAh3vUe0f4/zcVeNg9Q0I93zhZxxBVpcLIrls0/5jA=
+github.com/teonet-go/teowebrtc_signal_client v0.0.8/go.mod h1:+RgRCiMUdMevH+Ua4zWw9Wda231mBQiIo+vhhlpvx9Y=
 github.com/ugorji/go v1.1.7 h1:/68gy2h+1mWMrwZFeD1kQialdSzAb432dtpeJ42ovdo=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
 github.com/ugorji/go/codec v1.1.7 h1:2SvQaVZ1ouYrrKKwoSk2pzd4A9evlKJb9oTL+OaLUSs=
